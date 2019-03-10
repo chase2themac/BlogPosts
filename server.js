@@ -10,6 +10,8 @@ const app = express();
 
 const BlogPosts = require('./models');
 
+const router = express.Router();
+
 app.use(morgan('common'));
 
 BlogPosts.create('O.M.G','I just saw james, and he looks so confused about how this is actually working out XD. it is almost as if he didnt read the stuff, but some how just spaced out as he scrolled through everything. RIP', 'Tyler');
@@ -21,7 +23,7 @@ app.get('/BlogPosts', (req, res)=>{
 });
 
 app.post('/BlogPosts', jsonParser,(req,res)=>{
-    const requiredFields = ['title', 'content', 'author'];
+    const requiredFields = ['title', 'content', 'author','PublishDate'];
   for (let i=0; i<requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
@@ -30,8 +32,9 @@ app.post('/BlogPosts', jsonParser,(req,res)=>{
       return res.status(400).send(message);
     }
 }
-const post = BlogPosts.create(req.body.title, req.body.content, req.body.author);
-  res.status(201).json(post);
+
+const blog = BlogPosts.create(req.body.title, req.body.content, req.body.author, req.body.PublishDate);
+  res.status(201).json(blog);
 });
 
 app.put('/BlogPosts/:id', jsonParser, (req, res) => {
