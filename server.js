@@ -8,7 +8,7 @@ const jsonParser = bodyParser.json();
 
 const app = express();
 
-const BlogPosts = require('./models');
+const {BlogPosts} = require('./models');
 
 const router = express.Router();
 
