@@ -23,20 +23,20 @@ describe("blog posts", function() {
             .then(function(res) {
                 expect(res).to.have.status(200);
                 expect(res).to.be.json;
-                expect(res.body).to.be.a(array);
+                expect(res.body).to.be.a("array");
                 expect(res.body.length).to.be.above(0);
 
-                const expectedKeys = ["id", "title", "content", "author", "PublishDate"];
-                res.body.forEach(function() {
-                    expect(post).to.be.a("object");
+                const expectedKeys = ["id", "title", "content", "author", "publishDate"];
+                res.body.forEach(function(item) {
+                    expect(item).to.be.a("object");
                     expect(item).to.include.keys(expectedKeys);
                 });
             });
     });
 
     it("should add a post", function() {
-        const newItem = { title: "bruh", content: "have you guys actually used Travis? it is soooooooooooo terribly non user friendly it had nearly broken my spirit", author: "jtc"};
-        const expectedKeys = ["id","PublishDate", "title"].concat(Object.keys(newItem));
+        const newItem = { title: "bruh", content: "have you guys actually used Travis? it is soooooooooooo terribly non user friendly it had nearly broken my spirit", author: "jtc", publishDate: 3/18/2019};
+        const expectedKeys = ["id","publishDate", "title", "content"].concat(Object.keys(newItem));
         return chai
           .request(app)
           .post("/BlogPosts")
@@ -45,11 +45,11 @@ describe("blog posts", function() {
             expect(res).to.have.status(201);
             expect(res).to.be.json;
             expect(res.body).to.be.a("object");
-            expect(res.body).to.include.keys("id", "title", "content", "PublishDate", "author");
+            expect(res.body).to.include.keys(expectedKeys);
             expect(res.body.id).to.not.equal(null);
-            expect(res.body.title).to.equal(newPost.title);
-            expect(res.body.content).to.equal(newPost.content);
-            expect(res.body.author).to.equal(newPost.author);
+            expect(res.body.title).to.equal(newItem.title);
+            expect(res.body.content).to.equal(newItem.content);
+            expect(res.body.author).to.equal(newItem.author);
           });
           });
       
@@ -68,11 +68,13 @@ describe("blog posts", function() {
         return (
           chai
             .request(app)
-            .get("/blog-posts")
+            .get("/BlogPosts")
             .then(function(res) {
               const updatedPost = Object.assign(res.body[0], {
                 title: "bruh",
-                content: "la la la la la"
+                content: "la la la la la",
+                author: "jtc",
+                publishDate: 3/18/2019
               });
               return chai
                 .request(app)

@@ -23,7 +23,7 @@ app.get('/BlogPosts', (req, res)=>{
 });
 
 app.post('/BlogPosts', jsonParser,(req,res)=>{
-    const requiredFields = ['title', 'content', 'author','PublishDate'];
+    const requiredFields = ['title', 'content', 'author','publishDate'];
   for (let i=0; i<requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
@@ -33,7 +33,7 @@ app.post('/BlogPosts', jsonParser,(req,res)=>{
     }
 }
 
-const blog = BlogPosts.create(req.body.title, req.body.content, req.body.author, req.body.PublishDate);
+const blog = BlogPosts.create(req.body.title, req.body.content, req.body.author, req.body.publishDate);
   res.status(201).json(blog);
 });
 
