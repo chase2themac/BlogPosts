@@ -8,7 +8,7 @@ const expect = chai.expect;
 chai.use(chaiHttp);
 
 describe("blog posts", function() {
-    BeforeUnloadEvent(function() {
+    Before(function() {
         return runServer();
     });
 
