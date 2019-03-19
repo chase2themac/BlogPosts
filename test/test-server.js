@@ -24,7 +24,7 @@ describe("blog posts", function() {
                 expect(res).to.have.status(200);
                 expect(res).to.be.json;
                 expect(res.body).to.be.a(array);
-                expect(res.body.length).to.be.at.least(0);
+                expect(res.body.length).to.be.above(0);
 
                 const expectedKeys = ["id", "title", "content", "author"];
                 res.body.forEach(function() {
@@ -36,6 +36,7 @@ describe("blog posts", function() {
 
     it("should add a post", function() {
         const newItem = { title: "bruh", content: "have you guys actually used Travis? it is soooooooooooo terribly non user friendly it had nearly broken my spirit", author: "jtc"};
+        const expectedKeys = ["id","publishDate"].concat(Object.keys(newItem));
         return chai
           .request(app)
           .post("/BlogPosts")
@@ -46,11 +47,22 @@ describe("blog posts", function() {
             expect(res.body).to.be.a("object");
             expect(res.body).to.include.keys("id", "title", "content", "publishedDate", "author");
             expect(res.body.id).to.not.equal(null);
-            expect(res.body).to.deep.equal(
-              Object.assign(newItem, { id: res.body.id })
-            );
+            expect(res.body.title).to.equal(newPost.title);
+            expect(res.body.content).to.equal(newPost.content);
+            expect(res.body.author).to.equal(newPost.author);
           });
-      });
+          });
+      
+          it("should error if POST missing expected values", function() {
+            const badRequestData = {};
+            return chai
+              .request(app)
+              .post("/BlogPosts")
+              .send(badRequestData)
+              .then(function(res) {
+                expect(res).to.have.status(400);
+              });
+          });
     
       it("should update posts on PUT", function() {
         const updateData = {
@@ -71,7 +83,7 @@ describe("blog posts", function() {
                 .send(updateData);
             })
             .then(function(res) {
-              expect(res).to.have.status(200);
+              expect(res).to.have.status(204);
               expect(res).to.be.json;
               expect(res.body).to.be.a("object");
               expect(res.body).to.deep.equal(updateData);
