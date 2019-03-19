@@ -26,7 +26,7 @@ describe("blog posts", function() {
                 expect(res.body).to.be.a(array);
                 expect(res.body.length).to.be.above(0);
 
-                const expectedKeys = ["id", "title", "content", "author"];
+                const expectedKeys = ["id", "title", "content", "author", "PublishDate"];
                 res.body.forEach(function() {
                     expect(post).to.be.a("object");
                     expect(item).to.include.keys(expectedKeys);
@@ -36,7 +36,7 @@ describe("blog posts", function() {
 
     it("should add a post", function() {
         const newItem = { title: "bruh", content: "have you guys actually used Travis? it is soooooooooooo terribly non user friendly it had nearly broken my spirit", author: "jtc"};
-        const expectedKeys = ["id","publishDate"].concat(Object.keys(newItem));
+        const expectedKeys = ["id","PublishDate", "title"].concat(Object.keys(newItem));
         return chai
           .request(app)
           .post("/BlogPosts")
@@ -45,7 +45,7 @@ describe("blog posts", function() {
             expect(res).to.have.status(201);
             expect(res).to.be.json;
             expect(res.body).to.be.a("object");
-            expect(res.body).to.include.keys("id", "title", "content", "publishedDate", "author");
+            expect(res.body).to.include.keys("id", "title", "content", "PublishDate", "author");
             expect(res.body.id).to.not.equal(null);
             expect(res.body.title).to.equal(newPost.title);
             expect(res.body.content).to.equal(newPost.content);
