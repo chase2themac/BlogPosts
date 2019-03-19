@@ -1,2 +1,9 @@
 language: node_js
 node_js: node
+deploy:
+  provider: heroku
+  api_key:
+    secure: RFpn/Gokf4fIO4tb/HIzOuAjIAZeKQeP6AOfh1xmeUP1PW616iAoU5t9H86b8QW5czqVTU7VaGM/cKQXAlcvvAVU4oaiclBeiVB5FAG+tPjkYWUeVg6++2WArlDSVCD3dszyTmyW5yBjHFdgHKi4zc4YdYnwIFdzAPwvmE2UDAcoWK2/Fz25/iVuDoW7K1cKF4PrnKj0eQL0n8H35JsNBqFnsYcIb3C+FuX4BNx/GxykeX2ceG+S+RLqwvY+fMAcEAdgwqI5Du/3+G7FyYR1rNLurK/cySvyDhBIbvzOOs4IiDJ0TviI92j5aYL2r0mMmeWFhzsgklCFPlIdyn0tr+yExInQGdgVwp7yGlOBsA/7xeQbJm60YjVnTSMAWn9aKsS78Qz8bwNTfujm4w+YPe75SOXqsr3W5b9QHDTOsTx5goVm0vFe8NTZtH/9NIGP8g5zcCL65NtCrwv1ss2uiZSfKIwPwGiY8Q4nuEONfNWkcdebz5sDuvrMmSXQWCP+n/cQSlV0YpJhj/LEWwXz4malMwn/TMI2t5nbDLSKGRjLY5iuqSOgFHRzxBtlY6m4AF9uY0yq2O5FZy/XpC3Qrb6Rk9CGqDrAzE/4DtNMxGYbh2RhceoOEfhYqN4NTMSZ7hFg44/qpi5H4FRLK5MwQ0MlEKJtDKkhTroFA2YW3Zg=
+  app: BlogPosts
+  on:
+    repo: chase2themac/BlogPosts
