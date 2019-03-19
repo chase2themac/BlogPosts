@@ -71,7 +71,7 @@ describe("blog posts", function() {
             .get("/blog-posts")
             .then(function(res) {
               const updatedPost = Object.assign(res.body[0], {
-                title: "connect the dots",
+                title: "bruh",
                 content: "la la la la la"
               });
               return chai
