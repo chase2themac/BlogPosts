@@ -64,32 +64,26 @@ describe("blog posts", function() {
               });
           });
     
-      it("should update posts on PUT", function() {
-        const updateData = {
-          title: "bruh",
-          author: "jtc",
-          content: "well i guess its good we have mentors"
-        };
-    
+      it("should update blog posts on PUT", function() {
         return (
           chai
             .request(app)
-            .get("/BlogPosts")
+            .get("/blog-posts")
             .then(function(res) {
-              updateData.id = res.body[0].id;
+              const updatedPost = Object.assign(res.body[0], {
+                title: "connect the dots",
+                content: "la la la la la"
+              });
               return chai
                 .request(app)
-                .put(`/BlogPosts/${updateData.id}`)
-                .send(updateData);
+                .put(`/BlogPosts/${res.body[0].id}`)
+                .send(updatedPost)
+                .then(function(res) {
+                  expect(res).to.have.status(204);
+                });
             })
-            .then(function(res) {
-              expect(res).to.have.status(204);
-              expect(res).to.be.json;
-              expect(res.body).to.be.a("object");
-              expect(res.body).to.deep.equal(updateData);
-            })
-        );
-      });
+          );
+          });
     
       it("should delete the post on DELETE", function() {
         return (
