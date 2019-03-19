@@ -4,6 +4,7 @@
   "description": "What am I about?",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "mocha --exit"
   },
   "dependencies": {
