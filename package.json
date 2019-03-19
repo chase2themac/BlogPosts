@@ -23,5 +23,15 @@
     "node",
     "express"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://chase2themac.github.io/BlogPosts/issues"
+  },
+  "homepage": "https://chase2themac.github.io/BlogPosts#readme",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
+    "mocha": "^5.2.0"
+  },
+  "author": ""
 }
