@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const blogSchema = mongoose.Schema({
   title: { type: String, required: true} ,
   content: { type: String, required: true},
-  author: { firstName: String, lastName: String,  required: true},
+  author: { firstName: String, lastName: String},
   publishedDate: {date: Date}
 });
 
