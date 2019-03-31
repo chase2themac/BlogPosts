@@ -1,1 +1,1 @@
-BlogPost challange v1.0
+BlogPost challange v1.1

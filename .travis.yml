@@ -1,9 +1,0 @@
-language: node_js
-node_js: node
-deploy:
-  provider: heroku
-  api_key:
-    secure: 53bc0e07-43af-47e8-8d51-b5e3a72c125f
-  app: powerful-sea-16700
-  on:
-    repo: chase2themac/BlogPosts
