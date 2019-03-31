@@ -1,111 +1,142 @@
+"use strict"
+
 var express = require('express');
 
-const morgan = require('morgan');
+const mongoose = require("mongoose");
 
-const bodyParser = require('body-parser');
+mongoose.Promise = global.Promise;
 
-const jsonParser = bodyParser.json();
+const { PORT, DATABASE_URL } = require("./config");
+
+
+const { BlogPosts } = require("./models");
 
 const app = express();
+app.use(express.json());
 
-const {BlogPosts} = require('./models');
-
-const router = express.Router();
-
-app.use(morgan('common'));
-
-BlogPosts.create('O.M.G','I just saw james, and he looks so confused about how this is actually working out XD. it is almost as if he didnt read the stuff, but some how just spaced out as he scrolled through everything. RIP', 'Tyler');
-
-BlogPosts.create('well', 'talked to james again today, and i think he may actually know how it all works without actually knowing how it all works.... that would be crazy huh?','Tyler');
-
-app.get('/BlogPosts', (req, res)=>{
-    res.json(BlogPosts.get());
+app.get("/BlogPosts", (req, res) => {
+  BlogPosts.find()  
+    .then(BlogPosts => {
+      res.json({
+        BlogPosts: BlogPosts.map(BlogPosts => BlogPosts.serialize())
+      });
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
+    });
 });
 
-app.post('/BlogPosts', jsonParser,(req,res)=>{
-    const requiredFields = ['title', 'content', 'author','publishDate'];
-  for (let i=0; i<requiredFields.length; i++) {
+app.get("/BlogPosts/:id", (req, res) => {
+  BlogPosts
+    .findById(req.params.id)
+    .then(BlogPosts => res.json(BlogPosts.serialize()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
+    });
+});
+
+pp.post("/BlogPosts", (req, res) => {
+  const requiredFields = ["title", "content", "author"];
+  for (let i = 0; i < requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
-      const message = `Missing \`${field}\` in request body`
+      const message = `Missing \`${field}\` in request body`;
       console.error(message);
       return res.status(400).send(message);
     }
-}
+  }
 
-const blog = BlogPosts.create(req.body.title, req.body.content, req.body.author, req.body.publishDate);
-  res.status(201).json(blog);
+  BlogPosts.create({
+    title: req.body.title,
+    content: req.body.content,
+    author: req.body.author,
+    publishedDate: req.body.publishedDate
+  })
+    .then(BlogPosts => res.status(201).json(BlogPosts.serialize()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
+    });
 });
 
-app.put('/BlogPosts/:id', jsonParser, (req, res) => {
-    const requiredFields = ['title', 'content', 'author','id'];
-    for (let i=0; i<requiredFields.length; i++) {
-      const field = requiredFields[i];
-      if (!(field in req.body)) {
-        const message = `Missing \`${field}\` in request body`
-        console.error(message);
-        return res.status(400).send(message);
-      }
+app.put("/BlogPosts/:id", (req, res) => {
+  if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+    const message =
+      `Request path id (${req.params.id}) and request body id ` +
+      `(${req.body.id}) must match`;
+    console.error(message);
+    return res.status(400).json({ message: message });
+  }
+
+  const toUpdate = {};
+  const updateableFields = ["title", "content", "author"];
+
+  updateableFields.forEach(field => {
+    if (field in req.body) {
+      toUpdate[field] = req.body[field];
     }
-  
-    if (req.params.id !== req.body.id) {
-      const message = `Request path id (${req.params.id}) and request body id (${req.body.id}) must match`;
-      console.error(message);
-      return res.status(400).send(message);
-    }
-    console.log(`Updating blog posts \`${req.params.id}\``);
-    BlogPosts.update({
-      id: req.params.id,
-      title: req.body.title,
-      content: req.body.content,
-      author: req.body.author
-    });
-    res.status(204).end();
-  });
-  
-  app.delete('/BlogPosts/:id', (req, res) => {
-    BlogPosts.delete(req.params.id);
-    console.log(`Deleted Blog post \`${req.params.ID}\``);
-    res.status(204).end();
   });
 
-  //app.listen(process.env.PORT || 8080, () => {
-  //  console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
-  //});
+  BlogPosts
+    .findByIdAndUpdate(req.params.id, { $set: toUpdate })
+    .then(BlogPosts => res.status(204).end())
+    .catch(err => res.status(500).json({ message: "Internal server error" }));
+});
   
+app.delete("/Blogposts/:id", (req, res) => {
+  Blogposts.findByIdAndRemove(req.params.id)
+    .then(Blogposts => res.status(204).end())
+    .catch(err => res.status(500).json({ message: "Internal server error" }));
+});
+
+app.use("*", function(req, res) {
+  res.status(404).json({ message: "Not Found" });
+});  
+
   let server;
 
-function runServer() {
-  const port = process.env.PORT || 8080;
-  return new Promise((resolve, reject) => {
-    server = app
-      .listen(port, () => {
-        console.log(`Your app is listening on port ${port}`);
-        resolve(server);
-      })
-      .on("error", err => {
-        reject(err);
-      });
-  });
-}
-
-
-function closeServer() {
-  return new Promise((resolve, reject) => {
-    console.log("Closing server");
-    server.close(err => {
-      if (err) {
-        reject(err);
-        
-        return;
-      }
-      resolve();
+  function runServer(databaseUrl, port = PORT) {
+    return new Promise((resolve, reject) => {
+      mongoose.connect(
+        databaseUrl,
+        err => {
+          if (err) {
+            return reject(err);
+          }
+          server = app
+            .listen(port, () => {
+              console.log(`Your app is listening on port ${port}`);
+              resolve();
+            })
+            .on("error", err => {
+              mongoose.disconnect();
+              reject(err);
+            });
+        }
+      );
     });
-  });
-}
+  }
+  
+
+
+  function closeServer() {
+    return mongoose.disconnect().then(() => {
+      return new Promise((resolve, reject) => {
+        console.log("Closing server");
+        server.close(err => {
+          if (err) {
+            return reject(err);
+          }
+          resolve();
+        });
+      });
+    });
+  }
 
 if (require.main === module) {
-  runServer().catch(err => console.error(err));
+  runServer(DATABASE_URL).catch(err => console.error(err));
 }
 
 module.exports = { app, runServer, closeServer };
