@@ -6,23 +6,23 @@ const blogSchema = mongoose.Schema({
   title: { type: String, required: true} ,
   content: { type: String, required: true},
   author: { firstName: String, lastName: String},
-  publishedDate: {date: Date}
+  created: {date: Date, default: Date.now}
 });
 
-blogSchema.virtual("authorString").get(function() {
+blogSchema.virtual("authorName").get(function() {
   return `${this.author.firstName} ${this.author.lastName}`.trim();
 });
 
-blogSchema.method.serialize = function(){
+blogSchema.methods.serialize = function(){
   return {
     id: this._id,
     title: this.title,
     content: this.content,
-    author: this.author,
-    publishedDate: this.publishedDate
+    author: this.authorName,
+    created: this.created
   };
 };
 
-const BlogPosts = mongoose.model("BlogPosts", blogSchema);
+const BlogPosts = mongoose.model("blog-posts", blogSchema);
 
 module.exports = { BlogPosts};

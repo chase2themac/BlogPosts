@@ -16,10 +16,8 @@ app.use(express.json());
 
 app.get("/BlogPosts", (req, res) => {
   BlogPosts.find()  
-    .then(BlogPosts => {
-      res.json({
-        BlogPosts: BlogPosts.map(BlogPosts => BlogPosts.serialize())
-      });
+    .then(blogposts => {
+      res.json(blogposts.map(blogpost => blogpost.serialize()));
     })
     .catch(err => {
       console.error(err);
@@ -30,14 +28,14 @@ app.get("/BlogPosts", (req, res) => {
 app.get("/BlogPosts/:id", (req, res) => {
   BlogPosts
     .findById(req.params.id)
-    .then(BlogPosts => res.json(BlogPosts.serialize()))
+    .then(blogposts => res.json(blogposts.serialize()))
     .catch(err => {
       console.error(err);
       res.status(500).json({ message: "Internal server error" });
     });
 });
 
-pp.post("/BlogPosts", (req, res) => {
+app.post("/BlogPosts", (req, res) => {
   const requiredFields = ["title", "content", "author"];
   for (let i = 0; i < requiredFields.length; i++) {
     const field = requiredFields[i];
@@ -54,7 +52,7 @@ pp.post("/BlogPosts", (req, res) => {
     author: req.body.author,
     publishedDate: req.body.publishedDate
   })
-    .then(BlogPosts => res.status(201).json(BlogPosts.serialize()))
+    .then(blogposts => res.status(201).json(blogposts.serialize()))
     .catch(err => {
       console.error(err);
       res.status(500).json({ message: "Internal server error" });
@@ -87,7 +85,7 @@ app.put("/BlogPosts/:id", (req, res) => {
   
 app.delete("/Blogposts/:id", (req, res) => {
   Blogposts.findByIdAndRemove(req.params.id)
-    .then(Blogposts => res.status(204).end())
+    .then(blogposts => res.status(204).end())
     .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
 
