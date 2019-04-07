@@ -155,7 +155,7 @@ app.put("/BlogPosts/:id", (req, res) => {
     .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
   
-app.put('/authors/:id', (req,res) => {
+app.put('/author/:id', (req,res) => {
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
     res.status(400).json({
       error: `Request path id and request body id values don't match`
@@ -196,7 +196,7 @@ app.delete("/Blogposts/:id", (req, res) => {
     .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
 
-app.delete('/authors/:id', (req, res) => {
+app.delete('/author/:id', (req, res) => {
   BlogPosts
   .remove({ author: req.params.id})
   .then(() => {

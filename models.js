@@ -15,7 +15,7 @@ const authorSchema = mongoose.Schema({
 authorSchema.methods.serialize= function (){
   return {
     id: this._id,
-    name: [this.firstName, this.lastName],
+    name: this.authorName,
     userName: this.userName
   };
 };
@@ -25,7 +25,7 @@ const commentSchema = mongoose.Schema({ content: 'string' });
 const blogSchema = mongoose.Schema({
   title: 'string',
   content: 'string',
-  author: { type: mongoose.Schema.Types.ObjectId, ref: 'Author' },
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'author' },
   comments: [commentSchema]
 });
 
@@ -43,6 +43,9 @@ blogSchema.virtual('authorName').get(function() {
   return `${this.author.firstName} ${this.author.lastName}`.trim();
 });
 
+authorSchema.virtual('authorName').get(function() {
+  return `${this.firstName} ${this.lastName}`.trim();
+});
 
 
 blogSchema.methods.serialize = function(){
@@ -56,7 +59,7 @@ blogSchema.methods.serialize = function(){
 };
 
 
-const Author = mongoose.model('Author', authorSchema);
-const BlogPosts = mongoose.model('BlogPost', blogSchema);
+const Author = mongoose.model('author', authorSchema);
+const BlogPosts = mongoose.model('blog-post', blogSchema);
   
 module.exports = { BlogPosts, Author};
