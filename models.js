@@ -6,7 +6,7 @@ const blogSchema = mongoose.Schema({
   title: { type: String, required: true} ,
   content: { type: String, required: true},
   author: { firstName: String, lastName: String},
-  created: {date: Date, default: Date.now}
+  created: {type: Date, default: Date.now}
 });
 
 blogSchema.virtual("authorName").get(function() {

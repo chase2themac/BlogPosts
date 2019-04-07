@@ -28,7 +28,7 @@ app.get("/BlogPosts", (req, res) => {
 app.get("/BlogPosts/:id", (req, res) => {
   BlogPosts
     .findById(req.params.id)
-    .then(blogposts => res.json(blogposts.serialize()))
+    .then(blogpost => res.json(blogpost.serialize()))
     .catch(err => {
       console.error(err);
       res.status(500).json({ message: "Internal server error" });
@@ -52,7 +52,7 @@ app.post("/BlogPosts", (req, res) => {
     author: req.body.author,
     publishedDate: req.body.publishedDate
   })
-    .then(blogposts => res.status(201).json(blogposts.serialize()))
+    .then(blogpost => res.status(201).json(blogpost.serialize()))
     .catch(err => {
       console.error(err);
       res.status(500).json({ message: "Internal server error" });
@@ -79,13 +79,13 @@ app.put("/BlogPosts/:id", (req, res) => {
 
   BlogPosts
     .findByIdAndUpdate(req.params.id, { $set: toUpdate })
-    .then(BlogPosts => res.status(204).end())
+    .then(blogpost => res.status(204).end())
     .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
   
 app.delete("/Blogposts/:id", (req, res) => {
-  Blogposts.findByIdAndRemove(req.params.id)
-    .then(blogposts => res.status(204).end())
+  BlogPosts.findByIdAndRemove(req.params.id)
+    .then(blogpost => res.status(204).end())
     .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
 
